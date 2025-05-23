@@ -35,11 +35,7 @@
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item waves-effect" href="{{ route('jurusan.show', $dg->id) }}"><i class="ri-eye-line me-1"></i> Show</a>
                                     <a class="dropdown-item waves-effect" href="{{route('jurusan.edit',$dg['id'])}}"><i class="ri-pencil-line me-1"></i> Edit</a>
-                                    <form action="{{route('jurusan.destroy',$dg['id'])}}" method="post" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item waves-effect" onclick="return confirm('apakah anda yakin ingin menghapus data ini?')"><i class="ri-delete-bin-6-line me-1"></i> Delete</button>
-                                    </form>
+                                
                                 </div>
                             </div>
                         </td>

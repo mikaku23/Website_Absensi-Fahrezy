@@ -8,6 +8,19 @@
 
 @endsection
 @section('konten')
+
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+
+@if(session('warning'))
+<div class="alert alert-warning">
+    {{ session('warning') }}
+</div>
+@endif
+
 <div class="card">
     <a href="{{route('absen.create')}}" class="btn btn-success btn-custom-width mb-2"><i class="fas fa-plus"></i> Absen Siswa</a>
 
@@ -46,7 +59,7 @@
                     <th>Tanggal Absen</th>
                     <th>Jam Absen</th>
                     <th>Guru yang Mengabsen</th>
-                    
+
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
@@ -59,7 +72,7 @@
                     <td>{{$da->tanggal_absen}}</td>
                     <td>{{$da->jam_absen}}</td>
                     <td>{{$da->guru->nama}}</td>
-                   
+
                 </tr>
                 @endforeach
             </tbody>

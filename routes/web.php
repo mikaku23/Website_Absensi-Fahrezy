@@ -27,6 +27,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(
     function () {
 
+Route::put('absen3/{id}', [AbsenController::class, 'update'])->name('absen3.update');
+
     Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
     Route::resource('siswa', SiswaController::class);
     Route::resource('guru', GuruController::class);

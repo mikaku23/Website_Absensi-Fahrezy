@@ -8,7 +8,7 @@
             <small class="text-muted float-end">Ubah status absen</small>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('absen3.update', $mengabsen->id) }}">
+            <form method="POST" action="{{ route('absenWalikelas.update', $mengabsen->id) }}">
                 @csrf
                 @method('PUT')
                 <div class="row mb-4">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="row justify-content-end">
                     <div class="col-sm-10">
-                        <a href="{{ route('absen3.index') }}">
+                        <a href="{{ route('absenWalikelas.index') }}">
                             <button type="button" class="btn btn-primary waves-effect waves-light">Kembali</button>
                         </a>
                         <button type="submit" class="btn btn-success waves-effect waves-light">Simpan</button>

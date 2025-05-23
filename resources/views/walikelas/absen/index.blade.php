@@ -8,8 +8,20 @@
 
 @endsection
 @section('konten')
+
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+
+@if(session('warning'))
+<div class="alert alert-warning">
+    {{ session('warning') }}
+</div>
+@endif
 <div class="card">
-<a href="{{route('absenWalikelas.create')}}" class="btn btn-success btn-custom-width mb-2"><i class="fas fa-plus"></i> Absen Siswa</a>
+    <a href="{{route('absenWalikelas.create')}}" class="btn btn-success btn-custom-width mb-2"><i class="fas fa-plus"></i> Absen Siswa</a>
     <h5 class="card-header">Management Data Absen</h5>
     <div class="card-body">
         <form method="GET" action="{{ route('absenWalikelas.index') }}">
@@ -53,7 +65,7 @@
                         <td>{{$da->siswa->nama}}</td>
                         <td>{{$da->siswa->local->nama}}</td>
                         <td>{{$da->status}}</td>
-                       
+
                         <td>{{$da->tanggal_absen}}</td>
                         <td>{{$da->jam_absen}}</td>
                         <td>{{$da->guru->nama}}</td>
@@ -66,7 +78,7 @@
                                     <a class="dropdown-item" href="{{ route('absenWalikelas.edit', $da->id) }}">
                                         <i class="ri-pencil-line me-1"></i> Edit
                                     </a>
-                                   
+
                                 </div>
                             </div>
                         </td>

@@ -22,7 +22,7 @@ class AbsenController extends Controller
         }
 
         if ($request->has('tanggal_absen') && $request->tanggal_absen != '') {
-            $query->whereDate('tanggal', $request->tanggal_absen);
+            $query->whereDate('tanggal_absen', $request->tanggal_absen);
         }
 
         $dataabsen = $query->get();
@@ -65,16 +65,28 @@ class AbsenController extends Controller
         $statuses = $request->input('status', []);
         $currentDate = now()->toDateString();
         $currentTime = now()->toTimeString();
-        $guru = Guru::where('username', Auth::user()->username)->first(); // Get the logged-in guru
+        $guru = Guru::where('username', Auth::user()->username)->first();
+
+        $sudahAbsen = [];
 
         foreach ($statuses as $id => $status) {
             $siswa = Siswa::findOrFail($id);
 
-            // Update status in siswa table
+            // Cek apakah siswa sudah absen hari ini
+            $sudah = Mengabsen::where('id_siswa', $id)
+                ->where('tanggal_absen', $currentDate)
+                ->exists();
+
+            if ($sudah) {
+                $sudahAbsen[] = $siswa->nama; // Tambah ke daftar peringatan
+                continue; // Lewati siswa ini
+            }
+
+            // Update status di tabel siswa
             $siswa->status = $status;
             $siswa->save();
 
-            // Create a new record in mengabsens table
+            // Simpan absen baru
             Mengabsen::create([
                 'tanggal_absen' => $currentDate,
                 'jam_absen' => $currentTime,
@@ -82,6 +94,10 @@ class AbsenController extends Controller
                 'id_guru' => $guru->id,
                 'id_siswa' => $id,
             ]);
+        }
+
+        if (count($sudahAbsen) > 0) {
+            return redirect()->route('absen.index')->with('warning', 'Beberapa siswa sudah diabsen hari ini: ' . implode(', ', $sudahAbsen));
         }
 
         return redirect()->route('absen.index')->with('success', 'Status siswa dan tanggal absen berhasil diperbarui.');
@@ -132,7 +148,7 @@ class AbsenController extends Controller
         }
 
         if ($request->has('tanggal_absen') && $request->tanggal_absen != '') {
-            $query->whereDate('tanggal', $request->tanggal_absen);
+            $query->whereDate('tanggal_absen', $request->tanggal_absen);
         }
 
         $dataabsen = $query->get();
@@ -175,17 +191,28 @@ class AbsenController extends Controller
         $statuses = $request->input('status', []);
         $currentDate = now()->toDateString();
         $currentTime = now()->toTimeString();
-        $guru = Guru::where('id_user', Auth::id())->first();
-        // Get the logged-in guru
+        $guru = Guru::where('username', Auth::user()->username)->first();
+
+        $sudahAbsen = [];
 
         foreach ($statuses as $id => $status) {
             $siswa = Siswa::findOrFail($id);
 
-            // Update status in siswa table
+            // Cek apakah siswa sudah absen hari ini
+            $sudah = Mengabsen::where('id_siswa', $id)
+                ->where('tanggal_absen', $currentDate)
+                ->exists();
+
+            if ($sudah) {
+                $sudahAbsen[] = $siswa->nama; // Tambah ke daftar peringatan
+                continue; // Lewati siswa ini
+            }
+
+            // Update status di tabel siswa
             $siswa->status = $status;
             $siswa->save();
 
-            // Create a new record in mengabsens table
+            // Simpan absen baru
             Mengabsen::create([
                 'tanggal_absen' => $currentDate,
                 'jam_absen' => $currentTime,
@@ -195,36 +222,11 @@ class AbsenController extends Controller
             ]);
         }
 
-        return redirect()->route('absenWalikelas.index');
-    }
+        if (count($sudahAbsen) > 0) {
+            return redirect()->route('absenWalikelas.index')->with('warning', 'Beberapa siswa sudah diabsen hari ini: ' . implode(', ', $sudahAbsen));
+        }
 
-    public function editWalikelas($id)
-    {
-        $mengabsen = Mengabsen::with('siswa.local')->findOrFail($id);
-        return view('walikelas.absen.ubah', [
-            'menu' => 'absen',
-            'title' => 'Edit Absen',
-            'mengabsen' => $mengabsen
-        ]);
-    }
-
-    public function updateWalikelas(Request $request, $id)
-    {
-        $validasi = $request->validate([
-            'status' => 'required',
-        ], [
-            'status.required' => 'Status harus diisi',
-        ]);
-
-        $mengabsen = Mengabsen::findOrFail($id);
-        $mengabsen->status = $validasi['status'];
-        $mengabsen->save();
-
-        $siswa = Siswa::findOrFail($mengabsen->id_siswa);
-        $siswa->status = $validasi['status'];
-        $siswa->save();
-
-        return redirect(route('absenWalikelas.index'))->with('success', 'Status siswa berhasil diperbarui.');
+        return redirect()->route('absenWalikelas.index')->with('success', 'Status siswa dan tanggal absen berhasil diperbarui.');
     }
 
     public function indexSiswa(Request $request)
@@ -238,7 +240,7 @@ class AbsenController extends Controller
         }
 
         if ($request->has('tanggal_absen') && $request->tanggal_absen != '') {
-            $query->whereDate('tanggal', $request->tanggal_absen);
+            $query->whereDate('tanggal_absen', $request->tanggal_absen);
         }
 
         $dataabsen = $query->get();
